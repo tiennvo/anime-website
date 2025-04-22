@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Chuyển hướng từ thư mục gốc đến trang index.php
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ /index.php [L]
+
+# Chuyển hướng từ thư mục admin đến admin/index.php
+RewriteCond %{REQUEST_URI} ^/admin/?$
+RewriteRule ^admin/?$ /admin/index.php [L]

@@ -1,0 +1,136 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000000;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h3 {
+    margin: 0;
+    color: #f8c830;
+}
+
+.btn-view-all {
+    text-decoration: none;
+    color: #f8c830;
+    font-weight: bold;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Ẩn phần của ảnh ra ngoài khung */
+    border: 1px solid #f5f2f2;
+    border-radius: 5px;
+    background-color: #000000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card img {
+    width: 100%;
+    height: 120px; /* Đảm bảo ảnh có kích thước cố định */
+    object-fit: cover; /* Cắt ảnh để đầy khung mà không làm méo ảnh */
+}
+
+.card-body {
+    padding: 10px;
+    text-align: center;
+}
+
+.card-title {
+    font-size: 16px;
+    margin: 0;
+    color: #ffffff;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #ffffff;
+}
+.strong{
+    color: white;
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .section-header h3 {
+        font-size: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 14px;
+    }
+
+    .card-text {
+        font-size: 12px;
+    }
+}
+/* CSS cho dropdown menu */
+.dropdown-menu {
+    max-height: 300px; /* Kích thước tối đa của dropdown menu */
+    overflow-y: auto; /* Hiển thị thanh cuộn dọc khi vượt quá kích thước */
+    width: 200px; /* Chiều rộng của dropdown menu */
+}
+
+/* Căn chỉnh dropdown menu sang bên phải */
+.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+.modal-backdrop.show {
+    opacity: 0;  /* Hoặc thay đổi giá trị opacity nếu cần */
+    pointer-events: none; /* Đảm bảo không có sự kiện chuột trên backdrop */
+}
+
+.navbar-text {
+    font-size: 16px; /* Kích thước chữ */
+}
+
+.nav-link i {
+    font-size: 20px; /* Kích thước biểu tượng */
+}
+
+.d-flex {
+    display: flex;
+    align-items: center; /* Căn chỉnh theo chiều dọc */
+}
+
+.me-2 {
+    margin-right: 8px; /* Khoảng cách giữa tên và biểu tượng */
+}
+/* Thay đổi màu chữ của các liên kết thành màu trắng và loại bỏ gạch chân */
+a {
+    color: white; /* Màu chữ trắng */
+    text-decoration: none; /* Loại bỏ gạch chân */
+}
+
+a:hover {
+    color: #f0f0f0; /* Màu chữ sáng hơn khi hover */
+    text-decoration: underline; /* Thêm gạch chân khi hover để dễ nhận diện */
+}
