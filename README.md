@@ -1,1 +1,1 @@
-config tại database.php
+config tại dbconnect.php
