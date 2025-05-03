@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     // Truy vấn để kiểm tra thông tin đăng nhập
-    $query = "SELECT id, username, password FROM users WHERE username = ?";
+    $query = "SELECT id, username, password, money FROM users WHERE username = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Lưu thông tin người dùng vào phiên
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
-
+        $_SESSION['money'] = $user['money'];
         // Chuyển hướng về trang chính
         header("Location: index.php");
         exit;

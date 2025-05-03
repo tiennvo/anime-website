@@ -12,6 +12,24 @@ $offset = ($currentPage - 1) * $moviesPerPage;
 $genreId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $genreId = mysqli_real_escape_string($conn, $genreId);
 
+// Truy vấn để lấy tên thể loại từ bảng genres
+$genre_sql = "SELECT name FROM genres WHERE id = ?";
+$stmt = $conn->prepare($genre_sql);
+if ($stmt === false) {
+    die('Lỗi trong câu lệnh SQL (genre): ' . htmlspecialchars($conn->error));
+}
+$stmt->bind_param("i", $genreId);
+if (!$stmt->execute()) {
+    die('Lỗi khi thực thi câu lệnh SQL (genre): ' . htmlspecialchars($stmt->error));
+}
+$genre_result = $stmt->get_result();
+
+// Kiểm tra nếu có kết quả và lấy tên thể loại
+$genreName = '';
+if ($genre_row = $genre_result->fetch_assoc()) {
+    $genreName = $genre_row['name'];
+}
+
 // Truy vấn phim theo thể loại
 $query = "SELECT m.id, m.title, m.description, m.release_year, m.director, m.actors, m.genre, m.rating, m.trailer_url, m.type, m.video_url, m.image_url, c.name AS country_name
           FROM movies m
@@ -55,13 +73,15 @@ if (!$result) {
                 <!-- Phim theo thể loại -->
                 <div id="phim-theo-the-loai" class="section">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="text-warning">Phim Theo Thể Loại</h3>
+                        <h3 class="guide__title">Phim Theo Thể Loại: <?php echo $genreName; ?></h3>
                     </div>
                     <div class="row">
                         <?php while ($movie = mysqli_fetch_assoc($result)) { ?>
                             <div class="col-md-3 col-sm-6 mb-3">
                                 <div class="card">
+                                <a href="info.php?id=<?php echo $movie['id']; ?>">
                                     <img src="admin/view/img/<?php echo htmlspecialchars($movie['image_url']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($movie['title']); ?>">
+                                    </a>
                                     <div class="card-body">
                                         <h5 class="card-title">
                                             <a href="info.php?id=<?php echo $movie['id']; ?>" class="stretched-link">

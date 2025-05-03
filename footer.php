@@ -1,15 +1,15 @@
-<footer class="footer mt-auto py-4 bg-dark text-light">
+<footer class="footer mt-auto py-4 text-light" style="background-color: rgb(23 21 44 / 48%);">
         <div class="container">
             <div class="row">
                 <div class="col-md-3">
-                    <h5 class="text-warning">Vạn Giới Phim</h5>
+                    <h5 class="guide__title">Cook PHP</h5>
                     <p>
                         Tận hưởng trải nghiệm xem phim mới nhất miễn phí ngay tại PhimMoi và dành thời gian thư giãn
                         chill cùng gia đình và bạn bè. Với một thư viện phim phong phú.
                     </p>
                 </div>
                 <div class="col-md-2">
-                    <h5 class="text-warning">Phim Mới</h5>
+                    <h5 class="guide__title">Phim Mới</h5>
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-light">Phim chiếu rạp</a></li>
                         <li><a href="#" class="text-light">Phim lẻ</a></li>
@@ -21,7 +21,7 @@
                     </ul>
                 </div>
                 <div class="col-md-2">
-                    <h5 class="text-warning">Phim Hay</h5>
+                    <h5 class="guide__title">Phim Hay</h5>
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-light">Phim Mỹ</a></li>
                         <li><a href="#" class="text-light">Phim Hàn Quốc</a></li>
@@ -33,21 +33,19 @@
                     </ul>
                 </div>
                 <div class="col-md-2">
-                    <h5 class="text-warning">Phim Hot</h5>
+                    <h5 class="guide__title">Phim Hot</h5>
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-light">Về chúng tôi</a></li>
-                        <li><a href="#" class="text-light">Phimmoi</a></li>
-                        <li><a href="#" class="text-light">Sitemap</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">
-                    <h5 class="text-warning">Thông tin</h5>
+                    <h5 class="guide__title">Thông tin</h5>
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-light">Điều khoản sử dụng</a></li>
                         <li><a href="#" class="text-light">Chính sách riêng tư</a></li>
                         <li><a href="#" class="text-light">Khiếu nại bản quyền</a></li>
                     </ul>
-                    <p>&copy;2024 Vạn Giới Phim </p>
+                    <p>&copy;2025 Cook PHP </p>
                 </div>
             </div>
         </div>

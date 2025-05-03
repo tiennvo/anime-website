@@ -10,7 +10,7 @@ $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($currentPage - 1) * $moviesPerPage;
 
 // Truy vấn phim bộ từ cơ sở dữ liệu và lấy tên quốc gia
-$query = "SELECT m.id, m.title, m.description, m.release_year, m.director, m.actors, m.genre, m.rating, m.trailer_url, m.type, m.video_url, m.image_url, c.name AS country_name, c.id AS country_id
+$query = "SELECT m.id, m.title, m.description, m.release_year, m.director, m.actors, m.genre, m.rating, m.trailer_url, m.type, m.video_url, m.image_url, m.money, m.total_views, c.name AS country_name, c.id AS country_id
           FROM movies m
           JOIN countries c ON m.country_id = c.id
           WHERE m.type = 'series'
@@ -46,7 +46,7 @@ if (!$result) {
                 <!-- Phần phim theo mùa -->
                 <div id="phim-theo-mua" class="section">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="text-warning">Phim Bộ Mới Cập Nhật</h3>
+                        <h3 class="guide__title">Phim Bộ Mới Cập Nhật</h3>
                     </div>
                     <div class="row">
                         <?php while ($movie = mysqli_fetch_assoc($result)) { ?>
@@ -65,6 +65,8 @@ if (!$result) {
                                                 <?php echo htmlspecialchars($movie['country_name']); ?>
                                             </a>
                                         </p>
+                                        <p class="card-text">Giá: <?php echo htmlspecialchars(format_cash($movie['money']));?>đ</p>
+                                        <p class="card-text">Lượt xem: <?php echo htmlspecialchars($movie['total_views']);?></p>
                                     </div>
                                 </div>
                             </div>

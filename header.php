@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['username']) && isset($
     $password = $_POST['password'];
 
     // Truy vấn để kiểm tra thông tin đăng nhập
-    $query = "SELECT id, username, password FROM users WHERE username = ?";
+    $query = "SELECT id, username, password, money FROM users WHERE username = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['username']) && isset($
         // Lưu thông tin người dùng vào phiên
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
-
+        $_SESSION['money'] = $user['money'];
         // Chuyển hướng về trang chính
         header("Location: index.php");
         exit;
@@ -51,9 +51,11 @@ if (!$countriesResult) {
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgb(23 21 44 / 48%);">
     <div class="container-fluid">
-        <a class="navbar-brand" href="index.php">Vạn Giới Phim</a>
+        <a href="index.php"><img width="50" height="50" src="image/logo.jpg" class="v-logo"></a>
+        <a class="navbar-brand" href="index.php">Cook PHP</a>
+        
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -86,6 +88,12 @@ if (!$countriesResult) {
                         <?php } ?>
                     </ul>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tuphim.php">Tủ Phim</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="naptien.php">Nạp Tiền</a>
+                </li>
             </ul>
             <!-- Search form -->
             <form class="d-flex me-auto" role="search" action="timphim.php" method="get">
@@ -97,7 +105,7 @@ if (!$countriesResult) {
                     <?php if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) { ?>
                         <div class="d-flex align-items-center">
                             <a class="navbar-text me-2" href="info_user.php?id=<?php echo htmlspecialchars($_SESSION['user_id']); ?>">
-                                <?php echo htmlspecialchars($_SESSION['username']); ?>
+                                <?php echo htmlspecialchars($_SESSION['username']); ?> (<?php echo htmlspecialchars($_SESSION['money']); ?>đ)
                             </a>
                             <a class="nav-link" href="logout.php" title="Đăng Xuất">
                                 <i class="bi bi-box-arrow-right"></i>
@@ -117,7 +125,7 @@ if (!$countriesResult) {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="registerModalLabel">Đăng Ký</h5>
+                <h5 class="modal-title" id="registerModalLabel"  style="color: black">Đăng Ký</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -129,15 +137,15 @@ if (!$countriesResult) {
                 <?php endif; ?>
                 <form action="register.php" method="post">
                     <div class="mb-3">
-                        <label for="regUsername" class="form-label">Tài khoản</label>
+                        <label for="regUsername" class="form-label" style="color: black">Tài khoản</label>
                         <input type="text" class="form-control" id="regUsername" name="username" required>
                     </div>
                     <div class="mb-3">
-                        <label for="regEmail" class="form-label">Email</label>
+                        <label for="regEmail" class="form-label"  style="color: black">Email</label>
                         <input type="email" class="form-control" id="regEmail" name="email" required>
                     </div>
                     <div class="mb-3">
-                        <label for="regPassword" class="form-label">Mật khẩu</label>
+                        <label for="regPassword" class="form-label"  style="color: black">Mật khẩu</label>
                         <input type="password" class="form-control" id="regPassword" name="password" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Đăng Ký</button>
@@ -156,17 +164,17 @@ if (!$countriesResult) {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="loginModalLabel">Đăng Nhập</h5>
+                <h5 class="modal-title" id="loginModalLabel" style="color: black">Đăng Nhập</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="login.php" method="post">
                     <div class="mb-3">
-                        <label for="loginUsername" class="form-label">Tài khoản</label>
+                        <label for="loginUsername" class="form-label" style="color: black">Tài khoản</label>
                         <input type="text" class="form-control" id="loginUsername" name="username" required>
                     </div>
                     <div class="mb-3">
-                        <label for="loginPassword" class="form-label">Mật khẩu</label>
+                        <label for="loginPassword" class="form-label" style="color: black">Mật khẩu</label>
                         <input type="password" class="form-control" id="loginPassword" name="password" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Đăng Nhập</button>

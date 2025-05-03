@@ -2,14 +2,14 @@
 
 <div class="sidebar">
     <h4 class="text-white">Quản lý Trang</h4>
-    <a href="/vangioiphim/admin/index.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-    <a href="/vangioiphim/admin/manage_movies/index.php"><i class="fas fa-film"></i> Quản lý Phim</a>
-    <a href="/vangioiphim/admin/manage_episodes/index.php"><i class="fas fa-tv"></i> Quản lý Tập</a>
-    <a href="/vangioiphim/admin/manage_genres/index.php"><i class="fas fa-tags"></i> Quản lý Thể loại</a>
-    <a href="/vangioiphim/admin/manage_nation/index.php"><i class="fas fa-tags"></i> Quản lý Quốc Gia Phim</a>
-    <a href="/vangioiphim/admin/manage_users/index.php"><i class="fas fa-users"></i> Quản lý Người dùng</a>
-    <a href="/vangioiphim/admin/manage_comments/index.php"><i class="fas fa-comments"></i> Quản lý Bình luận</a>
-    <a href="/vangioiphim/admin/manage_ratings/index.php"><i class="fas fa-star"></i> Quản lý Đánh giá</a>
+    <a href="../admin/index.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="../admin/manage_movies/index.php"><i class="fas fa-film"></i> Quản lý Phim</a>
+    <a href="../admin/manage_episodes/index.php"><i class="fas fa-tv"></i> Quản lý Tập</a>
+    <a href="../admin/manage_genres/index.php"><i class="fas fa-tags"></i> Quản lý Thể loại</a>
+    <a href="../admin/manage_nation/index.php"><i class="fas fa-tags"></i> Quản lý Quốc Gia Phim</a>
+    <a href="../admin/manage_users/index.php"><i class="fas fa-users"></i> Quản lý Người dùng</a>
+    <a href="../admin/manage_comments/index.php"><i class="fas fa-comments"></i> Quản lý Bình luận</a>
+    <a href="../admin/manage_ratings/index.php"><i class="fas fa-star"></i> Quản lý Đánh giá</a>
 
     <!-- Thêm nút đăng nhập hoặc đăng xuất -->
     <?php if (!isset($_SESSION['user_id'])): ?>

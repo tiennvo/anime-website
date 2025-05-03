@@ -192,11 +192,11 @@ $totalPages = ceil($totalMovies / $moviesPerPage);
                     </nav>
                 </div>
             </div>
-            <!-- Sidebar -->
-            <?php include_once 'sidebar.php'; ?>
+            
         </div>
     </div>
-
+<!-- footer -->
+<?php include_once 'footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>

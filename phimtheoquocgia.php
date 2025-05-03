@@ -62,13 +62,15 @@ $countryName = $countryRow ? htmlspecialchars($countryRow['name']) : 'Unknown';
                 <!-- Phần phim theo quốc gia -->
                 <div id="phim-theo-quoc-gia" class="section">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h3 class="text-warning">Phim Theo Quốc Gia: <?php echo $countryName; ?></h3>
+                        <h3 class="guide__title">Phim Theo Quốc Gia: <?php echo $countryName; ?></h3>
                     </div>
                     <div class="row">
                         <?php while ($movie = mysqli_fetch_assoc($result)) { ?>
                             <div class="col-md-3 col-sm-6 mb-3">
                                 <div class="card">
+                                <a href="info.php?id=<?php echo $movie['id']; ?>">
                                     <img src="admin/view/img/<?php echo htmlspecialchars($movie['image_url']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($movie['title']); ?>">
+                                    </a>
                                     <div class="card-body">
                                         <h5 class="card-title">
                                             <a href="info.php?id=<?php echo $movie['id']; ?>" class="stretched-link">

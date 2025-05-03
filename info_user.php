@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // Lấy thông tin người dùng
 $user_id = $_SESSION['user_id'];
-$user_query = "SELECT username, email, password FROM users WHERE id = ?";
+$user_query = "SELECT username, email, password, money FROM users WHERE id = ?";
 $stmt = $conn->prepare($user_query);
 if ($stmt === false) {
     die('Error preparing statement: ' . $conn->error);
@@ -127,7 +127,7 @@ if ($saved_movies_result->num_rows > 0) {
     <div class="container my-5">
         <!-- Chỉnh sửa thông tin -->
         <div id="edit-info" class="section mb-5">
-            <h3 class="text-warning">Chỉnh sửa thông tin</h3>
+            <h3 class="guide__title">Chỉnh sửa thông tin</h3>
             <?php if (isset($successMsg)): ?>
                 <div class="alert alert-success"><?php echo htmlspecialchars($successMsg); ?></div>
             <?php endif; ?>
@@ -143,13 +143,17 @@ if ($saved_movies_result->num_rows > 0) {
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
                 </div>
+                <div class="mb-3">
+                    <label for="money" class="form-label">Số dư</label>
+                    <input type="money" class="form-control" id="money" name="money" value="<?php echo htmlspecialchars($user['money']); ?>đ" readonly>
+                </div>
                 <button type="submit" name="update_info" class="btn btn-primary">Cập nhật thông tin</button>
             </form>
         </div>
 
         <!-- Thay đổi mật khẩu -->
         <div id="change-password" class="section mb-5">
-            <h3 class="text-warning">Thay đổi mật khẩu</h3>
+            <!-- <h3 class="guide__title">Thay đổi mật khẩu</h3> -->
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
                 Thay đổi mật khẩu
             </button>
@@ -184,9 +188,9 @@ if ($saved_movies_result->num_rows > 0) {
             </div>
         </div>
 
-        <!-- Phim đã lưu -->
+        <!-- Phim đã lưu
         <div id="saved-movies" class="section mb-5">
-            <h3 class="text-warning">Phim đã lưu</h3>
+            <h3 class="guide__title">Phim đã lưu</h3>
             <div class="row">
                 <?php if (!empty($saved_movies)): ?>
                     <?php foreach ($saved_movies as $movie): ?>
@@ -204,7 +208,7 @@ if ($saved_movies_result->num_rows > 0) {
                     <p>Không có phim nào được lưu.</p>
                 <?php endif; ?>
             </div>
-        </div>
+        </div> -->
 
         <!-- Đăng xuất -->
         <div id="logout" class="section">

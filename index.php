@@ -26,8 +26,40 @@ if ($country_result->num_rows > 0) {
     }
 }
 
+// Truy vấn để lấy tổng số lượt xem của tất cả các tập phim theo mỗi bộ phim
+$views_sql = "SELECT movie_id, SUM(views) AS total_views FROM episodes GROUP BY movie_id";
+$views_result = $conn->query($views_sql);
+
+// Kiểm tra nếu truy vấn thành công
+if ($views_result) {
+    // Kiểm tra xem có dữ liệu trả về không
+    if ($views_result->num_rows > 0) {
+        $views = [];
+        while ($row = $views_result->fetch_assoc()) {
+            $views[$row['movie_id']] = $row['total_views']; // Lưu tổng số views của mỗi bộ phim
+        }
+    } else {
+        // Nếu không có dữ liệu trong bảng episodes
+        echo "Không có dữ liệu lượt xem trong bảng episodes.";
+    }
+} else {
+    // Nếu truy vấn không thành công
+    echo "Lỗi truy vấn: " . $conn->error;
+}
+$update_sql = "
+    UPDATE movies m
+    JOIN (
+        SELECT movie_id, SUM(views) AS total_views
+        FROM episodes
+        GROUP BY movie_id
+    ) e ON m.id = e.movie_id
+    SET m.total_views = e.total_views
+";
+$update_totalview = $conn->query($update_sql);
+
+
 // Truy vấn để lấy thông tin phim cập nhật mới nhất
-$latest_movies_sql = "SELECT id, title, image_url, country_id, `type` FROM movies ORDER BY release_year DESC LIMIT 8";
+$latest_movies_sql = "SELECT id, title, image_url, country_id, `type`, money FROM movies ORDER BY release_year DESC LIMIT 8";
 $latest_movies_result = $conn->query($latest_movies_sql);
 $latest_movies = [];
 if ($latest_movies_result->num_rows > 0) {
@@ -37,7 +69,9 @@ if ($latest_movies_result->num_rows > 0) {
             'title' => $row['title'],
             'image_url' => 'admin/view/img/' . $row['image_url'],
             'country' => isset($countries[$row['country_id']]) ? $countries[$row['country_id']] : 'Không xác định',
-            'type' => $row['type']
+            'type' => $row['type'],
+            'views' => isset($views[$row['id']]) ? $views[$row['id']] : 0,
+            'money' => $row['money']
         ];
     }
 }
@@ -46,7 +80,7 @@ if ($latest_movies_result->num_rows > 0) {
 $movie_types = ['series' => 'Phim bộ mới cập nhật', 'movie' => 'Phim lẻ mới cập nhật'];
 $movies = [];
 foreach ($movie_types as $type_key => $type_name) {
-    $movie_sql = "SELECT id, title, image_url, country_id FROM movies WHERE `type` = '$type_key' ORDER BY release_year DESC LIMIT 8";
+    $movie_sql = "SELECT id, title, image_url, country_id, money FROM movies WHERE `type` = '$type_key' ORDER BY release_year DESC LIMIT 8";
     $movie_result = $conn->query($movie_sql);
     $movies[$type_key] = [];
     if ($movie_result->num_rows > 0) {
@@ -55,7 +89,9 @@ foreach ($movie_types as $type_key => $type_name) {
                 'id' => $row['id'],
                 'title' => $row['title'],
                 'image_url' => 'admin/view/img/' . $row['image_url'],
-                'country' => isset($countries[$row['country_id']]) ? $countries[$row['country_id']] : 'Không xác định'
+                'country' => isset($countries[$row['country_id']]) ? $countries[$row['country_id']] : 'Không xác định',
+                'views' => isset($views[$row['id']]) ? $views[$row['id']] : 0,
+                'money' => $row['money']
             ];
         }
     }
@@ -68,7 +104,7 @@ foreach ($movie_types as $type_key => $type_name) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vạn Giới Phim</title>
+    <title>Cook PHP</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -81,8 +117,11 @@ foreach ($movie_types as $type_key => $type_name) {
     <div class="container my-5">
         <!-- Phần Phim cập nhật mới nhất -->
         <div id="latest-movies" class="section mb-5">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="text-warning">Phim cập nhật mới nhất</h3>
+        <center style="text-align: -webkit-center;">
+                    <img src="image/gi3.png" class="city__icon" style="vertical-align: middle; border-style: none;">
+                </center>
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <h3 class="guide__title">Phim cập nhật mới nhất</h3>
             </div>
             <div class="row">
                 <?php foreach ($latest_movies as $movie): ?>
@@ -100,6 +139,8 @@ foreach ($movie_types as $type_key => $type_name) {
                                         <?php echo htmlspecialchars($movie['country']); ?>
                                     </a>
                                 </p>
+                                <p class="card-text">Giá: <?php echo htmlspecialchars(format_cash($movie['money']));?></p>
+                                <p class="card-text">Lượt xem: <?php echo htmlspecialchars($movie['views']);?></p>
                             </div>
                         </div>
                     </div>
@@ -109,9 +150,11 @@ foreach ($movie_types as $type_key => $type_name) {
 
         <!-- Phần Phim lẻ mới cập nhật -->
         <div id="phim-le" class="section">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="text-warning">Phim lẻ mới cập nhật</h3>
-                <a href="phimle.php" class="btn btn-outline-warning">Xem tất cả</a>
+        <center style="text-align: -webkit-center;">
+                    <img src="image/gi2.png" class="city__icon" style="vertical-align: middle; border-style: none;">
+                </center>
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <a href="phimle.php" class="guide__title">Phim lẻ mới cập nhật</a>
             </div>
             <div class="row">
                 <?php foreach ($movies['movie'] as $movie): ?>
@@ -129,6 +172,8 @@ foreach ($movie_types as $type_key => $type_name) {
                                         <?php echo htmlspecialchars($movie['country']); ?>
                                     </a>
                                 </p>
+                                <p class="card-text">Giá: <?php echo htmlspecialchars(format_cash($movie['money']));?></p>
+                                <p class="card-text">Lượt xem: <?php echo htmlspecialchars($movie['views']);?></p>
                             </div>
                         </div>
                     </div>
@@ -138,9 +183,11 @@ foreach ($movie_types as $type_key => $type_name) {
 
         <!-- Phần Phim bộ mới cập nhật -->
         <div id="phim-bo" class="section">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="text-warning">Phim bộ mới cập nhật</h3>
-                <a href="phimbo.php" class="btn btn-outline-warning">Xem tất cả</a>
+        <center style="text-align: -webkit-center;">
+                    <img src="image/gi1.png" class="city__icon" style="vertical-align: middle; border-style: none;">
+                </center>
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <a href="phimbo.php" class="guide__title">Phim bộ mới cập nhật</a>
             </div>
             <div class="row">
                 <?php foreach ($movies['series'] as $movie): ?>
@@ -158,6 +205,8 @@ foreach ($movie_types as $type_key => $type_name) {
                                         <?php echo htmlspecialchars($movie['country']); ?>
                                     </a>
                                 </p>
+                                <p class="card-text">Giá: <?php echo htmlspecialchars(format_cash($movie['money']));?>đ</p>
+                                <p class="card-text">Lượt xem: <?php echo htmlspecialchars($movie['views']);?></p>
                             </div>
                         </div>
                     </div>
@@ -168,7 +217,6 @@ foreach ($movie_types as $type_key => $type_name) {
     </div>
     <!-- Footer -->
     <?php include_once 'footer.php'; ?>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

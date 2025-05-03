@@ -64,7 +64,7 @@ function genre_links($genres, $genre_ids) {
     $links = [];
     foreach ($genres as $index => $genre) {
         $genre_id = $genre_ids[$index]; // Lấy ID tương ứng với thể loại
-        $links[] = '<a href="phimtheotheloai.php?id=' . intval($genre_id) . '">' . htmlspecialchars($genre) . '</a>';
+        $links[] = '<a style="color: #69e0ff" href="phimtheotheloai.php?id=' . intval($genre_id) . '">' . htmlspecialchars($genre) . '</a>';
     }
     return implode(', ', $links);
 }
@@ -157,7 +157,7 @@ $is_saved = $stmt->get_result()->num_rows > 0;
             <div class="d-flex align-items-center">
                 <img src="admin/view/img/<?php echo htmlspecialchars($movie['image_url']); ?>" alt="Phim" class="img-thumbnail trailer-img" style="margin-right: 20px;">
                 <div>
-                    <h4><?php echo htmlspecialchars($movie['title']); ?></h4>
+                    <h4 class="guide__title"><?php echo htmlspecialchars($movie['title']); ?></h4>
                     <a href="playvideo.php?id=<?php echo $movie['id']; ?>" class="btn btn-primary trailer-button">
                         <i class="fas fa-play"></i> Xem Phim
                     </a>
@@ -177,7 +177,7 @@ $is_saved = $stmt->get_result()->num_rows > 0;
 
         <!-- Phần Đánh Giá -->
         <div class="info-section">
-            <h3>Đánh Giá</h3>
+            <h3 class="guide__title">Đánh Giá</h3>
             <ul class="movie-details">
             <li><strong>Thể loại:</strong> <?php echo genre_links($genres, $genre_ids); ?></li>
                 <li><strong>Năm phát hành:</strong> <?php echo htmlspecialchars($movie['release_year']); ?></li>
@@ -211,7 +211,7 @@ $is_saved = $stmt->get_result()->num_rows > 0;
 
         <!-- Phần Nội dung -->
         <div class="info-section">
-            <h3>Nội dung</h3>
+            <h3 class="guide__title">Nội dung</h3>
             <p><?php echo htmlspecialchars($movie['description']); ?></p>
         </div>
 
@@ -219,7 +219,7 @@ $is_saved = $stmt->get_result()->num_rows > 0;
 
         <!-- Phần Video Trailer bổ sung -->
         <div class="info-section" id="trailer-section">
-            <h3>Video Trailer</h3>
+            <h3 class="guide__title">Video Trailer</h3>
             <?php if (!empty($movie['trailer_url'])): ?>
                 <iframe class="trailer-video" src="<?php echo htmlspecialchars($movie['trailer_url']); ?>" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             <?php else: ?>

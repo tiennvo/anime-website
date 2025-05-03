@@ -4,7 +4,7 @@
 $servername = "localhost"; 
 $username = "root"; 
 $password = "";
-$dbname = "dbmovie";
+$dbname = "movie";
 
 // Tạo kết nối
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -13,5 +13,8 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
-
+function format_cash($price)
+{
+    return str_replace(",", ".", number_format($price));
+}
 ?>

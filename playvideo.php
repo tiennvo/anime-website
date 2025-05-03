@@ -17,13 +17,20 @@ if (!$stmt->execute()) {
     die('Lỗi khi thực thi câu lệnh SQL (movies): ' . htmlspecialchars($stmt->error));
 }
 $movie = $stmt->get_result()->fetch_assoc();
-
+//+view
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'update_view' && isset($_GET['episode_id'])) {
+    $episode_id = intval($_GET['episode_id']);
+    $sql = "UPDATE episodes SET views = views + 1 WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $episode_id);
+    $stmt->execute();
+    exit(); // Dừng xử lý sau khi update
+}
 // Nếu không có phim, chuyển hướng đến trang lỗi
 if (!$movie) {
     header('Location: 404.php');
     exit();
 }
-
 // Khởi tạo biến để lưu danh sách tập phim và video hiện tại
 $episodes = [];
 $current_video_url = $movie['video_url']; // Video mặc định
@@ -48,9 +55,8 @@ if ($movie['type'] === 'series') {
         $current_video_url = $episodes[0]['video_url'];
     }
 }
-
 // Truy vấn bình luận
-$comments_sql = "SELECT c.comment, u.username 
+$comments_sql = "SELECT c.created_at, c.comment, u.username 
                  FROM comments c
                  JOIN users u ON c.user_id = u.id
                  WHERE c.movie_id = ?";
@@ -63,7 +69,6 @@ if (!$stmt->execute()) {
     die('Lỗi khi thực thi câu lệnh SQL (comments): ' . htmlspecialchars($stmt->error));
 }
 $comments_result = $stmt->get_result();
-
 // Truy vấn phim mới cập nhật
 $new_movies_sql = "SELECT id, title, image_url 
                    FROM movies 
@@ -145,12 +150,41 @@ if (!$new_series_result) {
         }
 
         .video-controls button {
+            background-color: #f8f9fa;
             margin: 0 5px;
         }
 
         .dark-mode {
             background-color: #000;
             color: #fff;
+        }
+
+        body.dark-mode::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            backdrop-filter: brightness(40%) blur(4px);
+            background: rgba(0, 0, 0, 0.4); /* làm tối thêm nếu cần */
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        body.dark-mode > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Video wrapper luôn nổi trên tất cả */
+        .video-container {
+            position: relative;
+            z-index: 999;
+        }
+
+        #videoPlayer {
+            transition: all 0.4s ease; /* Mượt mà khi thay đổi */
+            border-radius: 8px;
         }
 
         .expand-video {
@@ -198,7 +232,11 @@ if (!$new_series_result) {
         }
 
         .episode-item:hover {
-            background-color: #e9ecef;
+            background-color:rgb(0, 127, 253);
+        }
+
+        .episode-item.active a {
+            background-color:rgb(143, 149, 156);
         }
     </style>
 </head>
@@ -210,20 +248,29 @@ if (!$new_series_result) {
     <div class="container my-5">
         <!-- Phần Video -->
         <div class="info-section video-container">
-            <h3><?php echo htmlspecialchars($movie['title']); ?></h3>
+            <h3 id="current-episode-title" class="guide__title"><?php echo htmlspecialchars($movie['title']); ?> - Tập: <?php echo ($movie['type'] === 'series' && !empty($episodes)) ? htmlspecialchars($episodes[0]['episode_number']) : 'Full'; ?></h3>
             <div class="embed-responsive embed-responsive-16by9">
                 <iframe id="videoPlayer" class="embed-responsive-item" src="<?php echo htmlspecialchars($current_video_url); ?>" allowfullscreen></iframe>
             </div>
         </div>
-
+        <!-- Video Controls -->
+        <div class="video-controls">
+            <button id="autoPlayToggle" class="btn btn-outline-secondary">Tập tiếp theo ▶️</button>
+            <button id="expandToggle" class="btn btn-outline-secondary">Mở rộng</button>
+            <button id="darkModeToggle" class="btn btn-outline-secondary">Sáng:🌞</button>
+            <button id="errorReport" class="btn btn-outline-danger">Báo lỗi</button>
+        </div>
         <!-- Phần danh sách tập phim -->
         <?php if ($movie['type'] === 'series' && !empty($episodes)): ?>
             <div class="info-section">
-                <h3>Danh Sách Tập Phim</h3>
+                <h3 class="guide__title">Danh Sách Tập Phim</h3>
                 <div class="episode-list">
                     <?php foreach ($episodes as $episode): ?>
                         <div class="episode-item">
-                            <a href="#" class="episode-link" data-video-url="<?php echo htmlspecialchars($episode['video_url']); ?>">
+                            <a href="#" class="episode-link" data-video-url="<?php echo htmlspecialchars($episode['video_url']); ?>"
+                            data-episode-id="<?php echo $episode['id']; ?>"
+                            data-episode-number="<?php echo $episode['episode_number']; ?>"
+                            data-movie-title="<?php echo htmlspecialchars($movie['title']); ?>">
                                 Tập <?php echo htmlspecialchars($episode['episode_number']); ?>
                             </a>
                         </div>
@@ -232,20 +279,14 @@ if (!$new_series_result) {
             </div>
         <?php endif; ?>
 
-        <!-- Video Controls -->
-        <div class="video-controls">
-            <button id="autoPlayToggle" class="btn btn-outline-secondary">Tự động chuyển tập: On</button>
-            <button id="expandToggle" class="btn btn-outline-secondary">Mở rộng</button>
-            <button id="darkModeToggle" class="btn btn-outline-secondary">Tắt đèn</button>
-            <button id="errorReport" class="btn btn-outline-danger">Báo lỗi</button>
-        </div>
+        
     </div>
 
     <div class="section-divider"></div>
 
     <!-- Phần Tên Phim - Nội dung - Đánh giá -->
     <div class="info-section">
-        <h3><?php echo htmlspecialchars($movie['title']); ?></h3>
+        <h3 class="guide__title"><?php echo htmlspecialchars($movie['title']); ?></h3>
         <p><strong>Nội dung:</strong> <?php echo htmlspecialchars($movie['description']); ?></p>
         <p><strong>Đánh giá:</strong>
         <div class="star-rating">
@@ -269,37 +310,52 @@ if (!$new_series_result) {
 
     <!-- Phần Bình luận -->
     <div class="info-section">
-        <h3>Bình luận</h3>
+        <h3 class="guide__title">Bình luận</h3>
         <div class="comment-section">
-            <form method="POST" action="add_comment.php">
-                <div class="mb-3">
-                    <textarea class="form-control" name="comment" placeholder="Viết bình luận của bạn..."></textarea>
-                </div>
-                <input type="hidden" name="movie_id" value="<?php echo $movie_id; ?>">
-                <button type="submit" class="btn btn-primary">Gửi Bình luận</button>
-            </form>
-            <!-- Hiển thị các bình luận -->
-            <div class="mt-3">
-                <h5>Bình luận gần đây:</h5>
-                <?php while ($comment = $comments_result->fetch_assoc()) : ?>
-                    <div class="border p-2 mb-2">
-                        <strong><?php echo htmlspecialchars($comment['username']); ?>:</strong> <?php echo htmlspecialchars($comment['comment']); ?>
-                    </div>
-                <?php endwhile; ?>
-            </div>
+    <form method="POST" action="add_comment.php">
+        <div class="mb-3">
+            <textarea class="form-control" name="comment" placeholder="Viết bình luận của bạn..."></textarea>
         </div>
+        <input type="hidden" name="movie_id" value="<?php echo $movie_id; ?>">
+        <button type="submit" class="btn btn-primary">Gửi Bình luận</button>
+    </form>
+
+    <!-- Hiển thị các bình luận -->
+    <div class="mt-3">
+        <?php while ($comment = $comments_result->fetch_assoc()) : ?>
+            <div class="comment">
+                <!-- Giả sử người dùng có ảnh đại diện -->
+                <div class="comment-body">
+                    <div class="comment-username"><?php echo htmlspecialchars($comment['username']); ?></div>
+                    <div class="comment-text"><?php echo htmlspecialchars($comment['comment']); ?></div>
+                    <div class="comment-time">
+                        <?php
+                        $created_at = new DateTime($comment['created_at']);
+                        echo $created_at->format('d/m/Y H:i');
+                        ?>
+                    </div>
+                </div>
+            </div>
+        <?php endwhile; ?>
+    </div>
+</div>
+
+</div>
+
     </div>
 
     <div class="section-divider"></div>
 
     <!-- Phần Phim Mới Cập Nhật -->
     <div class="info-section">
-        <h3>Phim Lẻ Mới Cập Nhật</h3>
+        <h3 class="guide__title">Phim Lẻ Mới Cập Nhật</h3>
         <div class="row">
             <?php while ($new_movie = $new_movies_result->fetch_assoc()): ?>
                 <div class="col-md-3">
                     <div class="card">
+                    <a href="info.php?id=<?php echo $movie['id']; ?>">
                         <img src="admin/view/img/<?php echo htmlspecialchars($new_movie['image_url']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($new_movie['title']); ?>">
+                        </a>
                         <div class="card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($new_movie['title']); ?></h5>
                             <a href="playvideo.php?id=<?php echo $new_movie['id']; ?>" class="btn btn-primary">Xem ngay</a>
@@ -314,12 +370,14 @@ if (!$new_series_result) {
 
     <!-- Phần Series Mới Cập Nhật -->
     <div class="info-section">
-        <h3>Phim Bộ Mới Cập Nhật</h3>
+        <h3 class="guide__title">Phim Bộ Mới Cập Nhật</h3>
         <div class="row">
             <?php while ($new_series = $new_series_result->fetch_assoc()): ?>
                 <div class="col-md-3">
                     <div class="card">
-                        <img src="admin/view/img/<?php echo htmlspecialchars($new_series['image_url']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($new_series['title']); ?>">
+                        <a href="info.php?id=<?php echo $movie['id']; ?>">
+                            <img src="admin/view/img/<?php echo htmlspecialchars($new_series['image_url']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($new_series['title']); ?>">
+                        </a>
                         <div class="card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($new_series['title']); ?></h5>
                             <a href="playvideo.php?id=<?php echo $new_series['id']; ?>" class="btn btn-primary">Xem ngay</a>
@@ -335,10 +393,10 @@ if (!$new_series_result) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">Báo lỗi</h5>
+                    <h5 class="modal-title" style="color: black" id="errorModalLabel">Báo lỗi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="color: black">
                     Bạn có muốn báo cáo lỗi không?
                 </div>
                 <div class="modal-footer">
@@ -361,19 +419,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const videoPlayer = document.getElementById('videoPlayer');
 
     // Toggle tự động chuyển tập
+    let autoPlayEnabled = true;
     autoPlayToggle.addEventListener('click', function() {
+        autoPlayEnabled = !autoPlayEnabled;
         const isOn = autoPlayToggle.textContent.includes('On');
-        autoPlayToggle.textContent = `Tự động chuyển tập: ${isOn ? 'Off' : 'On'}`;
+        //autoPlayToggle.textContent = `Tự động chuyển tập: ${autoPlayEnabled ? 'On' : 'Off'}`;
     });
 
     // Toggle mở rộng video
+    let iszoom = false;
     expandToggle.addEventListener('click', function() {
         videoPlayer.classList.toggle('expand-video');
+        iszoom = !iszoom;
+        expandToggle.textContent = `${iszoom ? 'Thu nhỏ' : 'Mở rộng'}`;
     });
 
     // Toggle chế độ tối
+    let dark = false;
     darkModeToggle.addEventListener('click', function() {
         document.body.classList.toggle('dark-mode');
+        dark = !dark;
+        darkModeToggle.textContent = `${dark ? 'Tối:🌙' : 'Sáng:🌞'}`;
     });
 
     // Mở modal báo lỗi
@@ -397,10 +463,41 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault(); // Ngăn chặn hành động mặc định của liên kết
             const videoUrl = this.getAttribute('data-video-url');
             const videoPlayer = document.getElementById('videoPlayer');
+            
             videoPlayer.src = videoUrl;
+            //Gửi yêu cầu cập nhật view
+            const episodeId = this.getAttribute('data-episode-id');
+            const episodenumber = this.getAttribute('data-episode-number');
+            const title = this.getAttribute('data-movie-title');
+            fetch(`playvideo.php?ajax=update_view&episode_id=${episodeId}`);
+            const titleElement = document.getElementById('current-episode-title');
+            if (titleElement) {
+                titleElement.textContent = `${title} - Tập: ${episodenumber}`;
+            }
+            // Xóa active của tất cả tập
+            document.querySelectorAll('.episode-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Thêm active cho tập được click
+            this.closest('.episode-item').classList.add('active');
         });
     });
 });
+//chuyển tập
+// videoPlayer.addEventListener('ended', () => {
+//     if (!autoPlayEnabled) return;
+
+//     const currentLink = document.querySelector('.episode-item.active a');
+//     const episodeLinks = Array.from(document.querySelectorAll('.episode-link'));
+//     const currentIndex = episodeLinks.indexOf(currentLink);
+
+//     // Nếu còn tập tiếp theo
+//     if (currentIndex >= 0 && currentIndex < episodeLinks.length - 1) {
+//         const nextLink = episodeLinks[currentIndex + 1];
+//         nextLink.click(); // Kích hoạt chuyển tập
+//     }
+// });
 
 </script>
 
