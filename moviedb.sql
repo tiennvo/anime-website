@@ -359,7 +359,7 @@ INSERT INTO `setting` (`id`, `type`, `value`) VALUES
 (1, 'stk_bank', 'TIENNVONET'),
 (2, 'ctk_bank', 'VO TRAN TIEN'),
 (3, 'api_bank', 'null'),
-(4, 'token_bank', '63d67475fd88c9acfebca8efd8426ec6');
+(4, 'token_bank', 'tiennvo');
 
 -- --------------------------------------------------------
 
