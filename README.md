@@ -1,0 +1,1 @@
+config tại dbconnect.php

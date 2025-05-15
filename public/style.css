@@ -1,0 +1,322 @@
+body {
+    margin: 0;
+    padding: 0;
+    color: white;
+    font-family: 'fontGenshin', sans-serif;
+    background: url('../image/background.png');
+    background-size: cover;
+    background-portion: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed!important;
+    background-position: center!important;
+}
+
+@font-face {
+    font-family: 'fontGenshin'; /* Tên font chữ */
+    src: url('../storage/fonts/fontGenshin.ttf') format('truetype'); /* Đường dẫn đến file font */
+    font-weight: normal;
+    font-style: normal;
+}
+
+.guide__title {
+    color: #FFFF;
+    text-shadow: 0 0 10px #5853ad, 0 0 20px #69e0ff, 0 0 40px #69e0ff;
+    font-family: 'fontGenshin', sans-serif;
+    font-size: 19px;
+}
+.animated {
+    font-family: 'fontGenshin', sans-serif;
+}
+.city__icon {
+    width: 100%; /* Tự động co giãn */
+    max-width: 87px; /* Kích thước tối đa */
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h3 {
+    margin: 0;
+    color: #00c3ff;
+}
+
+.btn-view-all {
+    text-decoration: none;
+    color: #f8c830;
+    font-weight: bold;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Ẩn phần của ảnh ra ngoài khung */
+    /* border: 1px solid #f5f2f2;
+    border-radius: 5px; */
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-image: url('../image/bg-fim.png'); 
+    background-size: 100% 101% !important;
+    background-position: center;
+    padding-bottom: 2rem !important;
+}
+
+.card img {
+    width: 100%;
+    height: 200px; /* Đảm bảo ảnh có kích thước cố định */
+    object-fit: cover; /* Cắt ảnh để đầy khung mà không làm méo ảnh */
+    max-width: 90%; max-height: 90%;
+    transform: translateY(10px) translateX(13px);
+    border: 4px solid #634827;
+    border-radius: 3%;
+    position: relative; /* Đảm bảo cho việc căn chỉnh */
+    left: 50%; /* Di chuyển hình ảnh từ trái sang phải */
+    top: 50%; /* Di chuyển hình ảnh từ trên xuống dưới */
+    transform: translate(-50%, -50%); /* Căn giữa hình ảnh */
+}
+
+.card-body {
+    padding: 10px;
+    text-align: center;
+}
+
+.card-title {
+    font-size: 16px;
+    margin: 0;
+    color: #6e2020;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #6e2020;
+}
+.strong{
+    color: white;
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .section-header h3 {
+        font-size: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 14px;
+    }
+
+    .card-text {
+        font-size: 12px;
+    }
+}
+/* CSS cho dropdown menu */
+.dropdown-menu {
+    max-height: 300px; /* Kích thước tối đa của dropdown menu */
+    overflow-y: auto; /* Hiển thị thanh cuộn dọc khi vượt quá kích thước */
+    width: 200px; /* Chiều rộng của dropdown menu */
+}
+
+/* Căn chỉnh dropdown menu sang bên phải */
+.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+.modal-backdrop.show {
+    opacity: 0;  /* Hoặc thay đổi giá trị opacity nếu cần */
+    pointer-events: none; /* Đảm bảo không có sự kiện chuột trên backdrop */
+}
+
+.navbar-text {
+    font-size: 16px; /* Kích thước chữ */
+}
+
+.nav-link i {
+    font-size: 20px; /* Kích thước biểu tượng */
+}
+
+.d-flex {
+    display: flex;
+    align-items: center; /* Căn chỉnh theo chiều dọc */
+}
+
+.me-2 {
+    margin-right: 8px; /* Khoảng cách giữa tên và biểu tượng */
+}
+/* Thay đổi màu chữ của các liên kết thành màu trắng và loại bỏ gạch chân */
+a {
+    color: #6e2020; /* Màu chữ trắng */
+    text-decoration: none; /* Loại bỏ gạch chân */
+}
+
+a:hover {
+    color: #f60094; /* Màu chữ sáng hơn khi hover */ /* Thêm gạch chân khi hover để dễ nhận diện */
+}
+
+.chatbox-container {
+    width: 400px;
+    height: 500px;
+    border: 1px solid #ddd;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatbox {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    border-bottom: 1px solid #ddd;
+}
+
+.chatbox-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.chatbox-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.chatbox-input button {
+    padding: 10px 15px;
+    margin-left: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.chatbox-input button:hover {
+    background-color: #45a049;
+}
+
+.user-message {
+    text-align: right;
+    background-color: #d1f0ff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.bot-message {
+    text-align: left;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.comment-section {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.comment-section form {
+    margin-bottom: 20px;
+}
+
+.comment-section textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    font-size: 16px;
+    font-family: 'Arial', sans-serif;
+    margin-bottom: 10px;
+    transition: border-color 0.3s ease;
+}
+
+.comment-section textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.comment-section button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.comment-section button:hover {
+    background-color: #0056b3;
+}
+
+.comment-section .comment {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.comment-section .comment:hover {
+    transform: scale(1.02);
+}
+
+.comment-section .comment-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.comment-section .comment-body {
+    flex: 1;
+}
+
+.comment-section .comment-username {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #007bff;
+}
+
+.comment-section .comment-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.4;
+}
+
+.comment-section .comment-time {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+    font-style: italic;
+}
